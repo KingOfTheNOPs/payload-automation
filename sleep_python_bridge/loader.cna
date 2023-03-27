@@ -1,0 +1,59 @@
+# Instead of having to load multiple aggressor scripts, define the scripts you want within this master loader and it will load them all for you.
+# Modified Scripts to load to be at top for easy access.
+# Once "loaded" can unload the 'load' script w/o impacting other scripts (but no harm in it remaining.)
+# Can also use it to 'reload' all scripts (or load other scripts individually).
+# Found at https://ntamonsec.blogspot.com/2020/07/cobalt-strike-aggressor-scripts-ception.html, which links to https://gist.github.com/am0nsec/e8c86a249368b46a071d99be44605cc5
+
+# Scripts to load
+@scripts_to_load = @(
+        "bofs/arsenal-kit/dist/arsenal_kit.cna"
+        "bofs/bokuloader/BokuLoader.cna"
+);
+
+# Java packages
+import aggressor.windows.ScriptManager;
+import aggressor.AggressorClient;
+import aggressor.Prefs;
+import cortana.Cortana;
+import java.util.List;
+
+# $1 - array of scripts to load
+sub load_aggressor_script  {
+        this('$script $client $cortana $prefs $list');
+        $script = [new ScriptManager: getAggressorClient()];
+        $client = [$script client];
+        $cortana = [$client engine];
+
+        # Get preferences
+        $prefs = [Prefs getPreferences];
+        $list = [$prefs getList: 'cortana.scripts'];
+
+        # Load/Reload scripts
+        foreach $value ($1) {
+                println("\c2[+]\c0 Loading: " . $value);
+
+                # Unload script if alread exist
+               if ([[$cortana scripts] containsKey: $value]) {
+                    [$cortana unloadScript: $value];
+                    [$list remove: $value];
+                }
+
+                # Load script
+                [$cortana loadScript: $value];
+                [$list add: $value];
+        }
+
+        # Refresh UI
+        [$prefs setList: 'cortana.scripts', $list];
+        [$prefs save];
+        [$script refresh];
+}
+
+# Banner
+println('');
+println('Cobalt Strike Aggressor Script Utility for Loading Aggressor Scripts');
+println('Copyright (C) 2020 Paul Laine (@am0nsec)');
+println('https://ntamonsec.blogspot.com/');
+println('');
+
+load_aggressor_script(@scripts_to_load);

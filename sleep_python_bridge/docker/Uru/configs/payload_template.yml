@@ -1,0 +1,42 @@
+payload:
+  artifacts:
+    - name: hideconsole
+      type: evasion
+      args:
+        - name: Show
+          value: false
+    - name: sleep
+      type: evasion
+      args:
+        - name: delay
+          value: "10"
+    - name: patchetw
+      type: evasion
+    - name: english-words
+      type: evasion
+      args:
+        - name: NumberOfWord
+          value: 110
+    - name: xor
+      type: encoder
+      args:
+        - name: Key
+          value: "h4x0r"
+    - name: hex
+      type: encoder
+    - name: zip
+      type: encoder
+    - name: reverse-order
+      type: encoder
+    - name: windows/native/local/go-shellcode-syscall
+      type: injector
+  type: exe
+  arch: x64
+  debug: false
+  obfuscation: true #need garble to be installed
+  #append: 90909090
+  #prepend: 90909090
+  #Example how to use tampering options
+  #file_properties_path: ./main.json
+  #limelighter:
+  #  domain: mydomain.com
